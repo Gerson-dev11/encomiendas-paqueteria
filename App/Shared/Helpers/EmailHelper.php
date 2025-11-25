@@ -11,4 +11,4 @@ class EmailHelper
 
         return true;
     }
-}
+}          
