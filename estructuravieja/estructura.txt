@@ -1,0 +1,149 @@
+📦app
+ ┣ 📂Console
+ ┃ ┣ 📂Commands
+ ┃ ┃ ┣ 📜TestAuthException.php
+ ┃ ┃ ┗ 📜TestLoginUserCommand.php
+ ┃ ┗ 📜Kernel.php
+ ┣ 📂Domain
+ ┃ ┣ 📂Entities
+ ┃ ┃ ┣ 📂Auth
+ ┃ ┃ ┃ ┣ 📜AuthEntity.php
+ ┃ ┃ ┃ ┗ 📜AuthOTPEntity.php
+ ┃ ┃ ┣ 📂Clientes
+ ┃ ┃ ┃ ┗ 📜ClienteEntity.php
+ ┃ ┃ ┣ 📂Employees
+ ┃ ┃ ┃ ┗ 📜EmployeesEntity.php
+ ┃ ┃ ┣ 📂Paquetes
+ ┃ ┃ ┃ ┗ 📜PaqueteEntity.php
+ ┃ ┃ ┣ 📂Viajes
+ ┃ ┃ ┃ ┗ 📜ViajeEntity.php
+ ┃ ┃ ┗ 📜EntitiesInformacion.txt
+ ┃ ┣ 📂Events
+ ┃ ┃ ┣ 📜AuthEventEmailSendOTP.php
+ ┃ ┃ ┗ 📜Events.txt
+ ┃ ┣ 📂Exceptions
+ ┃ ┃ ┣ 📂App
+ ┃ ┃ ┃ ┣ 📂Auth
+ ┃ ┃ ┃ ┃ ┣ 📂Business
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜AccountLockedBusinessException.php
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthenticationBusinessException.php
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthorizationBusinessException.php
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜RoleAssignmentException.php
+ ┃ ┃ ┃ ┃ ┗ 📂Validation
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜EmailValidationException.php
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜PasswordValidationException.php
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜TelefonoValidationException.php
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜TokenValidationException.php
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜TwoFactorValidationException.php
+ ┃ ┃ ┃ ┣ 📂Paquetes
+ ┃ ┃ ┃ ┃ ┣ 📜PaqueteNotFoundException.php
+ ┃ ┃ ┃ ┃ ┗ 📜PaqueteValidationException.php
+ ┃ ┃ ┃ ┗ 📂Validation
+ ┃ ┃ ┃ ┃ ┗ 📜ValidationException.php
+ ┃ ┃ ┣ 📂Interfaces
+ ┃ ┃ ┃ ┗ 📜ApiExceptionInterface.php
+ ┃ ┃ ┣ 📂Supabase
+ ┃ ┃ ┃ ┣ 📜SupabaseAuthException.php
+ ┃ ┃ ┃ ┗ 📜SupabaseQueryExceptions.php
+ ┃ ┃ ┗ 📜Exceptions.txt
+ ┃ ┣ 📂Interfaces
+ ┃ ┃ ┣ 📜Interfaces.txt
+ ┃ ┃ ┗ 📜UsersRepositoryInterfaceDomain.php
+ ┃ ┣ 📂Listener
+ ┃ ┃ ┗ 📜ListenerSendOTP.php
+ ┃ ┣ 📂Repositories
+ ┃ ┃ ┣ 📜ClientesRepositoryDomain.php
+ ┃ ┃ ┣ 📜EmployeesRepositoryDomain.php
+ ┃ ┃ ┣ 📜PaquetesRepositoryDomain.php
+ ┃ ┃ ┣ 📜RutasRepositoryDomain.php
+ ┃ ┃ ┗ 📜ViajeRepositoryDomain.php
+ ┃ ┣ 📂Services
+ ┃ ┃ ┣ 📜ServiceOTPSend.php
+ ┃ ┃ ┗ 📜Services.txt
+ ┃ ┣ 📂UseCases
+ ┃ ┃ ┣ 📂Auth
+ ┃ ┃ ┃ ┣ 📜LoginUserUseCase.php
+ ┃ ┃ ┃ ┗ 📜VerifyOtpUseCase.php
+ ┃ ┃ ┣ 📂Clientes
+ ┃ ┃ ┃ ┗ 📜ClienteUseCase.php
+ ┃ ┃ ┣ 📂Employees
+ ┃ ┃ ┃ ┗ 📜EmployeeUseCase.php
+ ┃ ┃ ┣ 📂Paquetes
+ ┃ ┃ ┃ ┗ 📜CreatePaqueteUseCase.php
+ ┃ ┃ ┣ 📂Rutas
+ ┃ ┃ ┃ ┗ 📜CreateRutaUseCase.php
+ ┃ ┃ ┣ 📂Viajes
+ ┃ ┃ ┃ ┣ 📜CreateViajeUseCase.php
+ ┃ ┃ ┃ ┗ 📜PaqueteSeguimientoEntity.php
+ ┃ ┃ ┗ 📜UseCases.txt
+ ┃ ┗ 📂ValueObjects
+ ┃ ┃ ┣ 📜CodeVerificationValueObject.php
+ ┃ ┃ ┣ 📜EmailValueObject.php
+ ┃ ┃ ┣ 📜TelefonoValueObject.php
+ ┃ ┃ ┗ 📜ValueObjects.txt
+ ┣ 📂Infrastructure
+ ┃ ┣ 📂Http
+ ┃ ┃ ┣ 📂Controllers
+ ┃ ┃ ┃ ┣ 📜AuthController.php
+ ┃ ┃ ┃ ┣ 📜AuthControllerOTP.php
+ ┃ ┃ ┃ ┣ 📜AuthSessionController.php
+ ┃ ┃ ┃ ┣ 📜ClientesController.php
+ ┃ ┃ ┃ ┣ 📜EmpleadoController.php
+ ┃ ┃ ┃ ┣ 📜PaqueteController.php
+ ┃ ┃ ┃ ┣ 📜RutaController.php
+ ┃ ┃ ┃ ┗ 📜ViajeController.php
+ ┃ ┃ ┣ 📂DTOs
+ ┃ ┃ ┃ ┣ 📂Auth
+ ┃ ┃ ┃ ┃ ┗ 📜AuthLoginDTO.php
+ ┃ ┃ ┃ ┣ 📂Clientes
+ ┃ ┃ ┃ ┃ ┗ 📜ClienteDTO.php
+ ┃ ┃ ┃ ┣ 📂Employees
+ ┃ ┃ ┃ ┃ ┣ 📜EmployeesRegisterDTO.php
+ ┃ ┃ ┃ ┃ ┗ 📜EmployeesUpdateDTO.php
+ ┃ ┃ ┃ ┣ 📂Paquete
+ ┃ ┃ ┃ ┃ ┗ 📜PaqueteDTO.php
+ ┃ ┃ ┃ ┣ 📂Viaje
+ ┃ ┃ ┃ ┃ ┣ 📜AsignarPaquetesDTO.php
+ ┃ ┃ ┃ ┃ ┗ 📜ViajeDTO.php
+ ┃ ┃ ┃ ┗ 📜DTOs.txt
+ ┃ ┃ ┣ 📂Middleware
+ ┃ ┃ ┃ ┣ 📂Globals
+ ┃ ┃ ┃ ┃ ┗ 📜GlobalKeyMiddleware.php
+ ┃ ┃ ┃ ┣ 📜Authenticate.php
+ ┃ ┃ ┃ ┣ 📜CheckAdminRole.php
+ ┃ ┃ ┃ ┣ 📜CheckRoleDB.php
+ ┃ ┃ ┃ ┣ 📜PreventRequestsDuringMaintenance.php
+ ┃ ┃ ┃ ┗ 📜TrimStrings.php
+ ┃ ┃ ┣ 📂Requests
+ ┃ ┃ ┃ ┣ 📂Auth
+ ┃ ┃ ┃ ┃ ┣ 📜AuthLoginUserRequest.php
+ ┃ ┃ ┃ ┃ ┗ 📜AuthOTPRequest.php
+ ┃ ┃ ┃ ┗ 📜Request.txt
+ ┃ ┃ ┣ 📂Resources
+ ┃ ┃ ┃ ┗ 📜Resources.txt
+ ┃ ┃ ┣ 📜Kernel.php
+ ┃ ┃ ┗ 📜http.txt
+ ┃ ┣ 📂Interfaces
+ ┃ ┃ ┗ 📜UsersRepository.php
+ ┃ ┣ 📂Providers
+ ┃ ┃ ┗ 📜Provides.txt
+ ┃ ┣ 📂Repositories
+ ┃ ┃ ┣ 📜ClientesRepository.php
+ ┃ ┃ ┣ 📜EmployeesRepositorie.php
+ ┃ ┃ ┣ 📜PaquetesRepository.php
+ ┃ ┃ ┣ 📜RutasRepository.php
+ ┃ ┃ ┗ 📜ViajeRepository.php
+ ┃ ┗ 📂SupaBase
+ ┃ ┃ ┗ 📂Connection
+ ┃ ┃ ┃ ┗ 📜ConexionSupaBase.php
+ ┣ 📂Providers
+ ┃ ┣ 📜AppServiceProvider.php
+ ┃ ┣ 📜AuthServiceProvider.php
+ ┃ ┣ 📜EventServiceProvider.php
+ ┃ ┣ 📜RepositoryServiceProvider.php
+ ┃ ┗ 📜RouteServiceProvider.php
+ ┣ 📂Shared
+ ┃ ┗ 📂Helpers
+ ┃ ┃ ┗ 📜Helpers.php
+ ┗ 📜DesgloseFunciones.txt
+
