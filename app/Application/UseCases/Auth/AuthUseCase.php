@@ -4,86 +4,111 @@ namespace App\Application\UseCases\Auth;
 
 use App\Application\DTOs\Auth\AuthDTO;
 use App\Domain\Exceptions\Auth\AuthDomainException;
-
-use App\Domain\Repositories\UserRepositoryInterface;
+use App\Domain\Repositories\AuthRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class AuthUseCase
 {
-    public function __construct(private UserRepositoryInterface $userRepository) {}
+    public function __construct(private AuthRepositoryInterface $userRepository) {}
 
     /**
-     * @return string El token OTP temporal para la cookie
-     *
      * @throws AuthDomainException
      */
     public function execute(AuthDTO $authDTO): string
     {
-        //* funcion bool para verificar si el usuario existe
-        $user = $this->userRepository->findByEmail($authDTO->email); 
+        try {
+            // 1. Intento de búsqueda de usuario (Infraestructura)
+            $user = $this->userRepository->findByEmail($authDTO->email);
+        } catch (Throwable $e) {
+            // Error de conexión a DB, tabla no existe, etc.
+            Log::error("Error de infraestructura al buscar usuario: " . $e->getMessage());
+            throw new AuthDomainException('SERVICE_UNAVAILABLE', 503);
+        }
 
+        // 2. Validación de existencia
         if (! $user) {
             throw new AuthDomainException('INVALID_CREDENTIALS', 401);
         }
 
-        // 3. Si el usuario EXISTE, pero la contraseña es incorrecta
-        if (! Hash::check($authDTO->password, $user->password_hash)) {
-            // Aquí SI es seguro llamar a la función porque $user es un objeto válido
+        // 3. Verificación de contraseña
+        if (!Hash::check($authDTO->password, $user->password)) {
             $this->manejarFalloAutenticacion($user);
             throw new AuthDomainException('INVALID_CREDENTIALS', 401);
         }
 
-        // 3. Validación de Bloqueo Administrativo
+        // 4. Validaciones de estado del usuario
         if ($user->cuenta_bloqueada) {
             throw new AuthDomainException('ACCOUNT_BLOCKED_ADMIN', 403);
         }
 
-        // 4. Validación de Bloqueo Temporal por intentos
         if ($user->tiempo_bloqueado && $user->tiempo_bloqueado > now()) {
             $minutosRestantes = $user->tiempo_bloqueado->diffInMinutes(now());
-
             throw new AuthDomainException(
-                'ACCOUNT_LOCKED_TEMP',
-                403,
-                ['minutes' => $minutosRestantes] // Metadatos para el frontend
+                'ACCOUNT_LOCKED_TEMP', 
+                403, 
+                ['minutes' => $minutosRestantes]
             );
         }
 
-        // --- FLUJO DE ÉXITO ---
+        // --- FLUJO DE ÉXITO (ZONA CRÍTICA DE PERSISTENCIA) ---
 
-        // 5. Resetear intentos
-        $this->userRepository->resetearIntentosFallidos($authDTO->email);
+        try {
+            // 5. Resetear intentos y preparar OTP
+            $this->userRepository->resetearIntentosFallidos($authDTO->email);
 
-        // 6. Generar Seguridad para el OTP
-        $otpCode = (string) random_int(100000, 999999);
-        $otpToken = Str::random(64);
+            $otpCode = (string) random_int(100000, 999999);
+            $otpToken = Str::random(64);
 
-        // 7. Persistir OTP en tabla independiente (Manejado por el repositorio)
-        $this->userRepository->saveOtpData([
-            'email' => $user->email,
-            'otp_code' => $otpCode,
-            'otp_token' => $otpToken,
-            'expires_at' => now()->addMinutes(15),
-        ]);
+            // 6. Persistir OTP en PostgreSQL
+            $this->userRepository->saveOtpData([
+                'email' => $user->email,
+                'otp_code' => $otpCode,
+                'otp_token' => $otpToken,
+                'expires_at' => now()->addMinutes(15),
+            ]);
 
-        // 8. Disparar evento de envío de correo (Inyectar el código)
-        // Event::dispatch(new OtpGeneratedEvent($user->email, $otpCode));
+            // 7. Envío de correo (Si falla aquí, capturamos el error)
+            Event::dispatch(new OtpGeneratedEvent($user->email, $otpCode));
 
-        return $otpToken;
+            return $otpToken;
+
+        } catch (Throwable $e) {
+            // Si falla el guardado del OTP o el reseteo de intentos
+            Log::critical("Error crítico en flujo de éxito login: " . $e->getMessage(), [
+                'user_email' => $authDTO->email
+            ]);
+            
+            // Al usuario le decimos que hubo un error interno pero seguro
+            throw new AuthDomainException('UNEXPECTED_ERROR', 500);
+        }
     }
 
+    /**
+     * Maneja el incremento de errores sin detener el flujo principal de excepción
+     */
     private function manejarFalloAutenticacion($user): void
     {
-        $nuevosIntentos = $user->intentos_fallidos + 1;
-        $minutosBloqueo = 0;
+        try {
+            $nuevosIntentos = $user->intentos_fallidos + 1;
+            $minutosBloqueo = 0;
 
-        // Lógica exponencial: cada 5 intentos bloqueamos
-        if ($nuevosIntentos % 5 === 0) {
-            $potencia = $nuevosIntentos / 5;
-            $minutosBloqueo = 5 * (2 ** ($potencia - 1)); // 5, 10, 20...
+            if ($nuevosIntentos % 5 === 0) {
+                $potencia = $nuevosIntentos / 5;
+                $minutosBloqueo = 5 * (2 ** ($potencia - 1));
+            }
+
+            $this->userRepository->incrementearIntentosFallidos(
+                $user->email, 
+                $nuevosIntentos, 
+                $minutosBloqueo
+            );
+        } catch (Throwable $e) {
+            // Si falla la DB al registrar el error, lo logueamos pero no 
+            // interrumpimos la respuesta 401 que viene después.
+            Log::warning("No se pudo actualizar intentos fallidos para: " . $user->email);
         }
-
-        $this->userRepository->incrementearIntentosFallidos($user->email, $nuevosIntentos, $minutosBloqueo);
     }
 }
