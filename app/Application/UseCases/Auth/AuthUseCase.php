@@ -19,7 +19,7 @@ class AuthUseCase
      */
     public function execute(AuthDTO $authDTO): string
     {
-        try {
+        try {                  
             // 1. Intento de búsqueda de usuario (Infraestructura)
             $user = $this->userRepository->findByEmail($authDTO->email);
         } catch (Throwable $e) {
