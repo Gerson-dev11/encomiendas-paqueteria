@@ -8,9 +8,16 @@ services:
       - ./:/var/www/html
     working_dir: /var/www/html
     environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
       - DB_CONNECTION=pgsql
-      - SUPABASE_URL=your_supabase_url
-      - SUPABASE_KEY=your_supabase_key
+      - DB_HOST=postgres       # importante: servicio postgres por nombre
+      - DB_PORT=5432
+      - DB_DATABASE=max_logistica_db
+      - DB_USERNAME=proyecto_logistica
+      - DB_PASSWORD=TopSecret
+    depends_on:
+      - postgres
     networks:
       - laravel_network
     healthcheck:
@@ -31,7 +38,51 @@ services:
       - app
     networks:
       - laravel_network
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: proyecto_logistica
+      POSTGRES_PASSWORD: TopSecret
+      POSTGRES_DB: max_logistica_db
+      TZ: America/El_Salvador
+    ports:
+      - "5432:5432"   # exponer a host (útil para psql en la máquina)
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - laravel_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proyecto_logistica -d max_logistica_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      - laravel_network
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin
+
+  redis:
+    image: redis:7
+    container_name: redis_server
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - laravel_network
+      
 networks:
   laravel_network:
     driver: bridge
