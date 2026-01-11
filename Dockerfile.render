@@ -1,0 +1,27 @@
+FROM php:8.2-cli
+
+RUN apt-get update && apt-get install -y \
+    libpq-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
+    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+COPY . .
+
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+RUN chmod -R 775 storage bootstrap/cache
+
+# FORZAR TODOS LOS LOGS A STDERR
+RUN echo "log_errors = On" >> /usr/local/etc/php/conf.d/render.ini
+RUN echo "error_log = /dev/stderr" >> /usr/local/etc/php/conf.d/render.ini
+RUN echo "display_errors = stderr" >> /usr/local/etc/php/conf.d/render.ini
+RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/render.ini
+
+# REDIRIGIR ARCHIVO DE LARAVEL A STDERR
+RUN ln -sf /dev/stderr storage/logs/laravel.log
+
+EXPOSE 8080
+
+# Comando que asegura logs visibles
+CMD sh -c "echo '🚀 RENDER - Container started, Laravel logs active' > /dev/stderr && php -S 0.0.0.0:8080 -t public"

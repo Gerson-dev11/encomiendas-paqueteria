@@ -1,0 +1,36 @@
+TODO LO QUE SE DEBE CUMPLIR EN MODULO 1
+
+OBJETIVOS
+    -   Permitir a los usuarios autenticados iniciar sesión en 2 pasos
+    -   El Administrador permitirá crear Usuarios para ser autenticados 
+    -   Validación de datos ingresados. 
+    -   Validación si Existe una sesión activa en otro dispositivo. 
+    -   Manejo de Errores con mensajes detallados para un mejor manejo de errores 
+    -   Restricción usuarios de lugares externos a la empresa (restricción a usuarios cualquiera) 
+    -   Administrar acceso a usuarios según rol asignado 
+
+REQUERIMIENTOS
+    -   Verificación de datos duplicados, evitar duplicados. 
+    -   Configuración y seguridad de datos y accesos restringidos a usuarios externos 
+    -   Validaciones en formulario de creación de empleados (nombres, direcciones, teléfonos, etc). 
+    -   Acceso a la base de dato según reglas asignadas dentro de esta misma, para evitar filtros de datos o acceso de datos no asignados para cada usuario especifico (cada usuario solo podrá ver sus datos asignados) 
+    -   Validación de contraseñas seguras (mínimo de caracteres, símbolos, etc.). 
+    -   Implementación de políticas de acceso según el rol del usuario. 
+    -   Los usuarios solo podrán acceder, modificar o visualizar los datos asignados explícitamente (ej. conductores solo ven sus viajes, admin ve todo). 
+
+FUNCIONALIDADES
+    -   Inicio de sesión con verificación en dos pasos (2FA) mediante código temporal (correo o app autenticadora). 
+    -   Validaciones de campos ingresados (nombre, correo, contraseña segura, etc.). 
+    -   Prevención de duplicados en campos como correo electrónico, DUI o teléfono. 
+    -   Creación de empleados con validación de datos. 
+    -   Edición limitada si ya existe historial (no puede modificarse rol o eliminarse si tiene viajes o acciones registradas). 
+    -   Eliminación lógica solo si no tiene historial vinculado. 
+    -   Verificación de sesión activa: impide múltiples sesiones simultáneas. 
+    -   Manejo de errores con mensajes detallados y amigables para cada validación. 
+    -   Restricción de acceso a usuarios externos o dispositivos no autorizados (por IP, ubicación o ID de dispositivo/tablet). 
+    -   Control de acceso según rol (solo ciertos roles pueden crear usuarios, ver ciertos datos o acceder a ciertas rutas). 
+    -   Registro de actividad (bitácora) para inicio de sesión, errores, accesos restringidos, etc. 
+
+AVANCE REALIZADOS MODULO 1
+
+-Manejo de excepciones para login, registro, verificacion en 2 pasos y verificacion de tokens.

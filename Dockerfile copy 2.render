@@ -1,0 +1,32 @@
+FROM php:8.2-fpm
+
+# Instalar dependencias
+RUN apt-get update && apt-get install -y \
+    libpq-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
+    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+
+# Instalar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Copiar aplicación
+COPY . .
+
+# Instalar dependencias
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader
+
+# Permisos
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Configuración para logs de Laravel
+RUN echo "LOG_CHANNEL=stack" >> .env && echo "LOG_LEVEL=debug" >> .env
+
+# Configurar PHP-FPM para mostrar logs en stdout
+RUN ln -sf /dev/stdout /var/log/php-fpm.log
+
+# Configurar PHP para que los errores se muestren en stdout
+RUN echo "error_log = /dev/stderr" >> /usr/local/etc/php/conf.d/docker-php-errors.ini
+
+# Iniciar PHP-FPM y el servidor web embebido de PHP
+CMD sh -c "php-fpm -D && php -S 0.0.0.0:8080 -t public"
