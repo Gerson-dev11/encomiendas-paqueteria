@@ -10,7 +10,7 @@ class AuthEntity
     private string $otp;
     private \DateTimeImmutable $expiresAt;
     private int $attempts;
-
+               
     public function __construct(
         int $userId,
         string $email,
