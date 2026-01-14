@@ -1,0 +1,23 @@
+[90m= [39m[34;4mIlluminate\Support\Collection[39;24m {#5373
+    [34mall[39m: [
+      {#5375
+        +"[1mid[22m": [35m1[39m,
+        +"[1mname[22m": "[32madmin[39m",
+        +"[1mcreated_at[22m": "[32m2026-01-10 16:39:47[39m",
+        +"[1mupdated_at[22m": [36mnull[39m,
+      },
+      {#5378
+        +"[1mid[22m": [35m2[39m,
+        +"[1mname[22m": "[32moperator[39m",
+        +"[1mcreated_at[22m": "[32m2026-01-10 16:39:47[39m",
+        +"[1mupdated_at[22m": [36mnull[39m,
+      },
+      {#5379
+        +"[1mid[22m": [35m3[39m,
+        +"[1mname[22m": "[32msupervisor[39m",
+        +"[1mcreated_at[22m": "[32m2026-01-10 16:39:47[39m",
+        +"[1mupdated_at[22m": [36mnull[39m,
+      },
+    ],
+  }
+

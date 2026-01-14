@@ -1,0 +1,6 @@
+<<<<<<< HEAD
+=======
+git remote add origin https://github.com/gerson/mi-laravel.git
+>>>>>>> 6d71e0d (Cosas Realizadas: 1. Migrations y Seeders Configuradas establecidas y testeadas 2. Declaraciones de las reglas del negocios ENTITY 3. Desarrollo de los Modelos)
+*
+!.gitignore
